@@ -808,9 +808,9 @@ export declare interface CodingContract {
      *
      * @param filename - Filename of the contract.
      * @param host - Host of the server containing the contract. Optional. Defaults to current server if not provided.
-     * @returns The specified contract’s data;
+     * @returns The specified contract’s data, data type depends on contract type.;
      */
-    getData(filename: string, host?: string): string;
+    getData(filename: string, host?: string): any;
 
     /**
      * Get the number of attempt remaining.
@@ -2124,6 +2124,29 @@ export declare interface NodeStats {
 /**
  * Collection of all functions passed to scripts
  * @public
+ * @remarks
+ * <b>Basic ns1 usage example:</b>
+ * ```ts
+ *  // Basic ns functions can be used directly
+ *  getHostname();
+ *  // Some related functions are gathered within a common namespace
+ *  stock.getPrice();
+ * ```
+ * {@link https://bitburner.readthedocs.io/en/latest/netscript/netscript1.html| ns1 in-game docs}
+ * <hr>
+ * <b>Basic ns2 usage example:</b>
+ * ```ts
+ * export async function main(ns) {
+ *  // Basic ns functions can be accessed on the ns object
+ *  ns.getHostname();
+ *  // Some related functions are gathered under a sub-property of the ns object
+ *  ns.stock.getPrice();
+ *  // Some functions need to be await ed
+ *  await ns.hack('n00dles');
+ * }
+ * ```
+ * {@link https://bitburner.readthedocs.io/en/latest/netscript/netscriptjs.html| ns2 in-game docs}
+ * <hr>
  */
 export declare interface NS extends Singularity {
     /**
@@ -2321,9 +2344,9 @@ export declare interface NS extends Singularity {
      *
      * @example
      * ```ts
-     * //For example, assume the following returns 1:
+     * //For example, assume the following returns 0.01:
      * hackAnalyze("foodnstuff");
-     * //This means that if hack the foodnstuff server, then you will steal 1% of its total money. If you hack using N threads, then you will steal N% of its total money.
+     * //This means that if hack the foodnstuff server, then you will steal 1% of its total money. If you hack using N threads, then you will steal N*0.01 times its total money.
      * ```
      * @param host - Hostname of the target server.
      * @returns The percentage of money you will steal from the target server with a single hack.
@@ -2559,15 +2582,14 @@ export declare interface NS extends Singularity {
      * @remarks
      * RAM cost: 0.2 GB
      *
-     * Returns an array containing the hostnames or IPs of all servers that are one
-     * node way from the specified target server. The hostnames/IPs in the returned
+     * Returns an array containing the hostnames of all servers that are one
+     * node way from the specified target server. The hostnames in the returned
      * array are strings.
      *
      * @param host - Hostname of the server to scan.
-     * @param hostnames - Optional boolean specifying whether the function should output hostnames (if true) or IP addresses (if false).
-     * @returns Returns an string of hostnames or IP.
+     * @returns Returns an string of hostnames.
      */
-    scan(host: string, hostnames?: boolean): string[];
+    scan(host?: string): string[];
 
     /**
      * Runs NUKE.exe on a server.
@@ -3001,7 +3023,7 @@ export declare interface NS extends Singularity {
      * RAM cost: 0.1 GB
      *
      * Returns the server’s instrinsic “growth parameter”. This growth
-     * parameter is a number between 1 and 100 that represents how
+     * parameter is a number between 0 and 100 that represents how
      * quickly the server’s money grows. This parameter affects the
      * percentage by which the server’s money is increased when using the
      * grow function. A higher growth parameter will result in a
@@ -3259,13 +3281,12 @@ export declare interface NS extends Singularity {
     deleteServer(host: string): boolean;
 
     /**
-     * Returns an array with either the hostnames or IPs of all of the servers you have purchased.
+     * Returns an array with the hostnames of all of the servers you have purchased.
      *
      * @remarks 2.25 GB
-     * @param hostnameMode - Optional. Defaults to true. Returns hostnames if true, and IPs if false.
-     * @returns Returns an array with either the hostnames or IPs of all of the servers you have purchased.
+     * @returns Returns an array with the hostnames of all of the servers you have purchased.
      */
-    getPurchasedServers(hostnameMode?: boolean): string[];
+    getPurchasedServers(): string[];
 
     /**
      * Returns the maximum number of servers you can purchase.
@@ -4846,6 +4867,25 @@ export declare interface Singularity {
      * @returns True if the installation was successful.
      */
     installBackdoor(): Promise<void>;
+
+    /**
+     * SF4.2 - Check if the player is focused.
+     * @remarks
+     * RAM cost: 0.1 GB
+     *
+     *
+     * @returns True if the player is focused.
+     */
+    isFocused(): boolean;
+
+    /**
+     * SF4.2 - Set the players focus.
+     * @remarks
+     * RAM cost: 0.1 GB
+     *
+     * @returns True if the focus was changed.
+     */
+    setFocus(focus: boolean): boolean;
 }
 
 /**
